@@ -1,9 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-
-interface FilterContextType {
-    filter: 'all' | 'active' | 'completed';
-    setFilter: (filter: FilterContextType['filter']) => void;
-}
+import { FilterContextType } from "../Types";
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
