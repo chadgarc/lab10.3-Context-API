@@ -5,12 +5,13 @@ import { FilterButtons } from './Components/FilterButtons';
 function App() {
   return (
     <Providers>
-      <div className="mockup-browser w-full">
+      <div className="mockup-browser border border-base-300 w-full">
         <div className="mockup-browser-toolbar flex justify-between">
           <h4 className='font-bold'>To Do App</h4>
           <ThemeToggleButton />
         </div>
         <section className='w-full'>
+          
           <FilterButtons />
         </section>
       </div>
