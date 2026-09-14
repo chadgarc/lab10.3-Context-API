@@ -1,6 +1,9 @@
 import { Providers } from './Providers';
 import { ThemeToggleButton } from './Components/ThemeToggleButton';
 import { FilterButtons } from './Components/FilterButtons';
+import { TodoInput } from './Components/TodoInput';
+import { TodoList } from './Components/TodoList';
+
 
 function App() {
   return (
@@ -11,7 +14,8 @@ function App() {
           <ThemeToggleButton />
         </div>
         <section className='w-full'>
-          
+          <TodoInput />
+          <TodoList />
           <FilterButtons />
         </section>
       </div>

@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { FilterContextType } from "../Types";
+import type { FilterContextType } from "../Types";
 
 const FilterContext = createContext<FilterContextType | undefined>(undefined);
 
