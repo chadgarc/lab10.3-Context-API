@@ -1,41 +1,72 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import type { TodoListContextType, Todo } from "../Types";
+import { createContext, useContext, useReducer, useEffect } from "react";
+import type { TodoListContextType, TodoAction, TodoState } from "../Types";
 
 const TodoContext = createContext<TodoListContextType | undefined>(undefined);
 
+function todoReducer(state: TodoState, action: TodoAction): TodoState {
+    switch (action.type) {
+        case 'ADD_TODO': {
+            const newId = state.lastId + 1;
+            return {
+                ...state,
+                lastId: newId,
+                todoList: [...state.todoList, { id: newId.toString(), task: action.payload, isCompleted: false }]
+            };
+        }
+        case 'REMOVE_TODO': {
+            return {
+                ...state,
+                todoList: state.todoList.filter((todo) => todo.id !== action.payload)
+            };
+        }
+        case 'TOGGLE_TODO': {
+            return {
+                ...state,
+                todoList: state.todoList.map((todo) =>
+                    todo.id === action.payload ? { ...todo, isCompleted: !todo.isCompleted } : todo
+                )
+            };
+        }
+        case 'EDIT_TODO': {
+            return {
+                ...state,
+                todoList: state.todoList.map((todo) =>
+                    todo.id === action.payload.id ? { ...todo, task: action.payload.task } : todo
+                )
+            };
+        }
+        case 'CLEAR_COMPLETED': {
+            return {
+                ...state,
+                todoList: state.todoList.filter((todo) => !todo.isCompleted)
+            };
+        }
+        default:
+            return state;
+    }
+}
+
 const prevList = localStorage.getItem('todoList');
+const initialState: TodoState = {
+    todoList: prevList ? JSON.parse(prevList) : [],
+    lastId: Number(prevList ? JSON.parse(prevList)[JSON.parse(prevList).length - 1]?.id : 0)
+};
 
 export function TodoContextProvider({ children }: { children: React.ReactNode }) {
-    const [todoList, setTodoList] = useState<Todo[]>(prevList ? JSON.parse(prevList) : []);
-    const [lastId, setLastId] = useState<number>(Number(todoList[todoList.length - 1]?.id) || 0);
-
-    const addTodo = (task: string) => {
-        setLastId(lastId + 1);
-        setTodoList([...todoList, { id: (lastId + 1).toString(), task, isCompleted: false }]);
-    }
-
-    const removeTodo = (id: string) => {
-        setTodoList(todoList.filter((todo) => todo.id !== id));
-    }
-
-    const updateTodoStatus = (id: string) => {
-        setTodoList(todoList.map((todo) => todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo));
-    }
-
-    const updateTodoTask = (id: string, task: string) => {
-        setTodoList(todoList.map((todo) => todo.id === id ? { ...todo, task } : todo));
-    }
-
-    const clearCompletedTodos = () => {
-        setTodoList(todoList.filter((todo) => !todo.isCompleted));
-    }
+    const [state, dispatch] = useReducer(todoReducer, initialState);
 
     useEffect(() => {
-        localStorage.setItem('todoList', JSON.stringify(todoList));
-    }, [todoList]);
+        localStorage.setItem('todoList', JSON.stringify(state.todoList));
+    }, [state.todoList]);
+
+    const addTodo = (task: string) => dispatch({ type: 'ADD_TODO', payload: task });
+    const removeTodo = (id: string) => dispatch({ type: 'REMOVE_TODO', payload: id });
+    const updateTodoStatus = (id: string) => dispatch({ type: 'TOGGLE_TODO', payload: id });
+    const updateTodoTask = (id: string, task: string) => dispatch({ type: 'EDIT_TODO', payload: { id, task } });
+    const clearCompletedTodos = () => dispatch({ type: 'CLEAR_COMPLETED' });
 
     return (
-        <TodoContext.Provider value={{ todoList, addTodo, removeTodo, updateTodoStatus, updateTodoTask, clearCompletedTodos }}>
+        <TodoContext.Provider value={{ todoList: state.todoList, addTodo, removeTodo, updateTodoStatus, updateTodoTask, clearCompletedTodos }}>
             {children}
         </TodoContext.Provider>
     )

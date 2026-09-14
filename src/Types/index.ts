@@ -22,3 +22,15 @@ export interface TodoListContextType {
     updateTodoTask: (id: string, task: string) => void;
     clearCompletedTodos: () => void;
 }
+
+export type TodoAction =
+    | { type: 'ADD_TODO'; payload: string }
+    | { type: 'REMOVE_TODO'; payload: string }
+    | { type: 'TOGGLE_TODO'; payload: string }
+    | { type: 'EDIT_TODO'; payload: { id: string; task: string } }
+    | { type: 'CLEAR_COMPLETED' };
+
+export interface TodoState {
+    todoList: Todo[];
+    lastId: number;
+}
