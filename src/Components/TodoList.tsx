@@ -7,8 +7,8 @@ export function TodoList(){
     const {filter} = useFilterContext();
 
     return (
-        <div className="px-10 flex flex-col justify-between mt-2">
-            <ul className="flex flex-col overflow-scroll h-195 lg:h-170 gap-2 w-full">
+        <div className="px-10 flex flex-col justify-between">
+            <ul className="flex flex-col overflow-scroll h-195 lg:h-170 gap-2 w-full pt-5">
                 {todoList.map(todo => {
                     if (filter === 'all') return <TodoItem key={todo.id} {...todo} />
                     if (filter === 'active') return !todo.isCompleted && <TodoItem key={todo.id} {...todo} />

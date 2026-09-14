@@ -1,17 +1,31 @@
 import { useState } from "react";
 import { useTodoListContext } from "../contexts/TodoContext";
 
-export function TodoInput(){
-    const [input, setInput] = useState('');
+interface TodoInputProps {
+    initialValue?: string;
+    buttonText?: string;
+    onSave?: (task: string) => void;
+}
+
+export function TodoInput({ initialValue = '', buttonText = 'Add task', onSave }: TodoInputProps = {}) {
+    const [input, setInput] = useState(initialValue);
     const { addTodo } = useTodoListContext();
 
-    const handleSubmit = () => {
-        if (input.trim() !== '') addTodo(input);
-        setInput('');
+    const handleSubmit = (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+        const trimmed = input.trim();
+        if (trimmed === '') return;
+
+        if (onSave) {
+            onSave(trimmed);
+        } else {
+            addTodo(trimmed);
+            setInput('');
+        }
     };
 
     return (
-        <section className="flex gap-2">
+        <form onSubmit={handleSubmit} className="flex gap-2">
             <label className="floating-label">
                 <input type="text"
                 placeholder="Input"
@@ -20,9 +34,9 @@ export function TodoInput(){
                 <span>Task</span>
             </label>
             <button
+            type="submit"
             className="btn hover:btn-info hover:text-white"
-            onClick={handleSubmit}
-            >Add task</button>
-        </section>
+            >{buttonText}</button>
+        </form>
     )
 }
