@@ -1,6 +1,18 @@
-
 import { useThemeContext } from '../contexts/ThemeContext';
 
+/**
+ * ThemeToggleButton component renders a toggle switch for switching
+ * between light and dark themes.
+ *
+ * Uses the `useThemeContext` hook to access the current theme state
+ * and the `toggleTheme` function. The checkbox is bound to the theme
+ * via `checked={theme === 'dark'}`, so checking it triggers `toggleTheme`.
+ *
+ * The checkbox is styled by DaisyUI's `theme-controller` class,
+ * and displays two SVG icons (sun and moon) to represent the themes.
+ *
+ * @returns {JSX.Element} A label containing a checkbox and two SVG icons.
+ */
 export function ThemeToggleButton() {
     const { theme, toggleTheme } = useThemeContext();
 

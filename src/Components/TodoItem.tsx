@@ -3,10 +3,36 @@ import { useTodoListContext } from "../contexts/TodoContext";
 import type { Todo } from "../Types";
 import { TodoInput } from "./TodoInput";
 
+/**
+ * TodoItem component renders a single todo item with its checkbox,
+ * task text, edit button, and delete button.
+ *
+ * Uses the `useTodoListContext` hook to access the CRUD functions:
+ * - `updateTodoStatus` — toggles completion (called by checkbox)
+ * - `removeTodo` — deletes the todo (called by delete button)
+ * - `updateTodoTask` — updates the task text (called by edit mode)
+ *
+ * Manages its own local `isEditing` state via useState to toggle
+ * between display mode and edit mode. When editing, it renders
+ * a TodoInput component in edit mode (with `onSave` callback).
+ *
+ * The component receives `id`, `task`, and `isCompleted` as props
+ * from the Todo list, matching the `Todo` interface from Types/index.ts.
+ *
+ * @param {Todo} props - The todo data: id, task, and isCompleted status.
+ * @returns {JSX.Element} A list item with checkbox, task text, and action buttons.
+ */
 export function TodoItem({ id, task, isCompleted }: Todo) {
     const { updateTodoStatus, removeTodo, updateTodoTask } = useTodoListContext();  
     const [isEditing, setIsEditing] = useState(false);
 
+    /**
+     * Handles the task update when the user edits a todo in edit mode.
+     * Calls `updateTodoTask` to dispatch an EDIT_TODO action, then
+     * exits edit mode.
+     *
+     * @param {string} newTask - The updated task text.
+     */
     const handleUpdate = (newTask: string) => {
         updateTodoTask(id, newTask);
         setIsEditing(false);
